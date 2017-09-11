@@ -125,26 +125,30 @@ def Solver(filename: str):
 		print("Pass number: " + str(pass_number))
 
 		#: Find possible solutions.
-		pencil = []
+		pencil = [[[0] for i in range(9)] for i in range(9)]
 		for blank_index, blank in enumerate(blanks):
-			pencil.append([])
 			row = get_row(blank[0], puzzle)
 			col = get_col(blank[1], puzzle)
 			box = get_box(blank[0] // 3, blank[1] // 3, puzzle)  #: 0, 2 => 0, 0/ 5, 5 => 1, 1
 
 			for i in range(1,10):
 				if i not in row and i not in col and i not in box:
-					pencil[blank_index].append(i)
+					if pencil[blank[0]][blank[1]] == [0]:
+						pencil[blank[0]][blank[1]] = []
+					pencil[blank[0]][blank[1]].append(i)
 
 		#: Find cells with only one posibility
-		for index, possibilities in enumerate(pencil):
-			if len(possibilities) == 1:
-				set_cell(blanks[index][0], blanks[index][1], possibilities[0], puzzle)
+		for prow_index, pencilled_row in enumerate(pencil):
+			for index, possibilities in enumerate(pencilled_row):
+				if len(possibilities) == 1 and possibilities[0] != 0:
+					set_cell(prow_index, index,possibilities[0], puzzle)
 
-				print("Row " + str(blanks[index][0] + 1) + ", Col " + str(blanks[index][1] + 1) + " has been set to: " + str(possibilities[0]))
-				print_puzzle(puzzle)
+					print("Row " + str(prow_index) + ", Col " + str(index) + " has been set to: " + str(possibilities[0]))
+					print_puzzle(puzzle)
 
 		#: Find rows with only one possiblity
+		for index, possiblities in enumerate(pencil):
+			pass
 
 		#: Find cols with only one possibility
 
