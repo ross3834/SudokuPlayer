@@ -65,6 +65,7 @@ def get_cell(x: int, y: int, puzzle: list):
 
 def set_cell(x: int, y: int, new_val , puzzle: list):
 	puzzle[x][y] = new_val
+	print("Row " + str(x + 1) + ", Col " + str(y + 1) + " has been set to: " + str(new_val))
 
 def get_row(row: int, puzzle: list):
 	return puzzle[row]
@@ -72,7 +73,7 @@ def get_row(row: int, puzzle: list):
 def get_col(col: int, puzzle: list):
 	return [row[col] for row in puzzle]
 
-def get_box(box_x: int, box_y: int, puzzle: list):
+def get_box(box_x: int, box_y: int, puzzle: list): #: Indexing starts at 0!!
 	x_init = 3 * box_x
 	y_init = 3 * box_y
 	x_bound = x_init + 3
@@ -137,20 +138,58 @@ def Solver(filename: str):
 						pencil[blank[0]][blank[1]] = []
 					pencil[blank[0]][blank[1]].append(i)
 
+		#: Remove Candidates from pencil using Block and column/Row Interactions
+
+
 		#: Find cells with only one posibility
 		for prow_index, pencilled_row in enumerate(pencil):
 			for index, possibilities in enumerate(pencilled_row):
 				if len(possibilities) == 1 and possibilities[0] != 0:
 					set_cell(prow_index, index,possibilities[0], puzzle)
-
-					print("Row " + str(prow_index) + ", Col " + str(index) + " has been set to: " + str(possibilities[0]))
 					print_puzzle(puzzle)
 
 		#: Find rows with only one possiblity
-		for index, possiblities in enumerate(pencil):
-			pass
+		for prow_index, prow in enumerate(pencil):
+			for i in range(1,10):
+				count = 0
+				col_index = 0
+				for index, possibilities in enumerate(prow):
+					if i in possibilities:
+						count += 1
+						col_index = index
+				if count == 1:
+					set_cell(prow_index, col_index, i, puzzle)
+					print_puzzle(puzzle)
 
 		#: Find cols with only one possibility
+		for col in range(9):
+			for i in range(1, 10):
+				count = 0
+				row_index = 0
+				for index, possibilities in enumerate(get_col(col, pencil)):
+					if i in possibilities:
+						count += 1
+						row_index = index
+
+				if count == 1:
+					set_cell(row_index, col, i, puzzle)
+					print_puzzle(puzzle)
+
+		#: Find boxes with only one possibility
+		for i in range(1, 10):
+			for box_row in range(3):
+				for box_col in range(3):
+					count = 0
+					locn_box = [0, 0]
+					for index, possibilities in enumerate(get_box(box_row, box_col, pencil)):
+						if i in possibilities:
+							count += 1
+							locn_box[0] = (index // 3) + (3 * box_row)
+							locn_box[1] = (index % 3) + (3 * box_col)
+					if count == 1:
+						set_cell(locn_box[0], locn_box[1], i, puzzle)
+						print("Found by Box")
+						print_puzzle(puzzle)
 
 		#: Remove values that have been found this pass
 		mark = []
@@ -162,11 +201,19 @@ def Solver(filename: str):
 			for blank in mark:
 				blanks.remove(blank)
 		else:
+			print("pencil: ")
+			for item in pencil:
+				print(str(item) + '\t')
+
+			#print("blanks: ")
+			#for item in blanks:
+			#	print(item)
+
 			msg = "This puzzle cannot be determined any further as ALL blank spaces now have more than 2 open options."
 			raise IndeterminantPuzzleError(msg)
 
 		pass_number += 1
-	print("The puzzle has been sucessfully solved after " + str(pass_number - 1) + " pass(es).")
+	print("The puzzle has been sucessfully solved after " + str(pass_number - 1) + " passes.")
 
 if __name__ == "__main__":
 	Solver(argv[1])
