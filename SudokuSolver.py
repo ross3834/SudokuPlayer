@@ -138,15 +138,68 @@ def Solver(filename: str):
 						pencil[blank[0]][blank[1]] = []
 					pencil[blank[0]][blank[1]].append(i)
 
-		#: Remove Candidates from pencil using Block and column/Row Interactions
+		#: Remove Candidates from pencil with Block and column/Row Interaction
+		#: If within a box, there are two+ numbers than exist in a line (row or col)
+		#: AND they dont exist anywhere else IN the box; nowehere else in that line (row col)
+		#: can those numbers exist!
+		for box_row in range(3):
+			for box_col in range(3):
+				#: For each set of possibilities
+				box = get_box(box_row, box_col, pencil)
+				#: Remove candidates from rows
+				for inner_row in range(3):
+					row_within_box = box[inner_row * 3: (inner_row * 3) + 3]
+					#print(row_within_box)
+					for i in range(1, 10):
+						count = 0
+						double_count = 0
+						for index, spos in enumerate(row_within_box):
+							if i in spos:
+								count += 1
+						for spos in box:
+							if i in spos:
+								double_count += 1
+						if count > 1 and double_count == count:
+							row = get_row((inner_row + ((box_row) * 3)), pencil)
+							for removal_index, removal_spos in enumerate(row):
+								if removal_index not in range(box_col * 3, (box_col * 3) + 3):
+									if i in removal_spos:
+										removal_spos.remove(i)
+										print("Removed " + str(i) + " as a possibility from row " + str((inner_row + ((box_row) * 3) + 1)) +
+										      " and col " + str(removal_index + 1))
 
+				#: Remove candidates from columns
+				for inner_col in range(3):
+					col_within_box = box[inner_col::3]
+					for i in range(1, 10):
+						count = 0
+						double_count = 0
+						for index, spos in enumerate(col_within_box):
+							if i in spos:
+								count += 1
+						for spos in box:
+							if i in spos:
+								double_count += 1
+						if count > 1 and double_count == count:
+							col = get_col((inner_col + ((box_col) * 3)), pencil)
+							for removal_index, removal_spos in enumerate(col):
+								if removal_index not in range(box_row * 3, (box_row * 3) + 3):
+									if i in removal_spos:
+										removal_spos.remove(i)
+										print("Removed " + str(i) + " as a possibility from row " + str(removal_index + 1) +
+										      " and col " + str(inner_col + ((box_col) * 3)))
+
+		#: Remove candidates throgh the X-Wing and SwordFish techniques
+		#: Check for x-wing style board in cols
+		#x_wing_connections = find_xwing_patterns(pencil) #: Returns data structure with [[[value to remove, row], [], []], [[value to remove, col], [], []]]
 
 		#: Find cells with only one posibility
 		for prow_index, pencilled_row in enumerate(pencil):
 			for index, possibilities in enumerate(pencilled_row):
 				if len(possibilities) == 1 and possibilities[0] != 0:
-					set_cell(prow_index, index,possibilities[0], puzzle)
-					print_puzzle(puzzle)
+					if get_cell(prow_index, index, puzzle) == 0:
+						set_cell(prow_index, index,possibilities[0], puzzle)
+						print_puzzle(puzzle)
 
 		#: Find rows with only one possiblity
 		for prow_index, prow in enumerate(pencil):
@@ -158,8 +211,9 @@ def Solver(filename: str):
 						count += 1
 						col_index = index
 				if count == 1:
-					set_cell(prow_index, col_index, i, puzzle)
-					print_puzzle(puzzle)
+					if get_cell(prow_index, col_index, puzzle) == 0:
+						set_cell(prow_index, col_index, i, puzzle)
+						print_puzzle(puzzle)
 
 		#: Find cols with only one possibility
 		for col in range(9):
@@ -172,8 +226,9 @@ def Solver(filename: str):
 						row_index = index
 
 				if count == 1:
-					set_cell(row_index, col, i, puzzle)
-					print_puzzle(puzzle)
+					if get_cell(prow_index, col, puzzle) == 0:
+						set_cell(row_index, col, i, puzzle)
+						print_puzzle(puzzle)
 
 		#: Find boxes with only one possibility
 		for i in range(1, 10):
@@ -187,9 +242,9 @@ def Solver(filename: str):
 							locn_box[0] = (index // 3) + (3 * box_row)
 							locn_box[1] = (index % 3) + (3 * box_col)
 					if count == 1:
-						set_cell(locn_box[0], locn_box[1], i, puzzle)
-						print("Found by Box")
-						print_puzzle(puzzle)
+						if get_cell(locn_box[0], locn_box[1], puzzle) == 0:
+							set_cell(locn_box[0], locn_box[1], i, puzzle)
+							print_puzzle(puzzle)
 
 		#: Remove values that have been found this pass
 		mark = []
@@ -208,12 +263,48 @@ def Solver(filename: str):
 			#print("blanks: ")
 			#for item in blanks:
 			#	print(item)
+			empty_pencil = True
+			for row in pencil:
+				for item in row:
+					if item != [0]:
+						empty_pencil = False
 
-			msg = "This puzzle cannot be determined any further as ALL blank spaces now have more than 2 open options."
+			if empty_pencil:
+				msg = "This puzzle cannot be determined any futher as there are no more valid moves."
+			else:
+				msg = "This puzzle cannot be determined any further as ALL blank spaces now have more than 2 open options."
 			raise IndeterminantPuzzleError(msg)
 
 		pass_number += 1
 	print("The puzzle has been sucessfully solved after " + str(pass_number - 1) + " passes.")
+
+def find_xwing_patterns(pencill: str): #: Returns data structure with [[[value to remove, row], [], []], [[value to remove, col], [], []]]
+	removes = [[], []]
+	for i in range(9):
+		for x in range(9):
+			for y in range(9):
+				if x not in removes[0] and y not in removes[1]:
+					by_row = True
+					while get_next_connection(i, (x, y), pencil, by_row) is not [True, x, y]:
+						by_row = not by_row
+						#if 
+def get_next_connection(value: int, coordinate: tuple, pencil: str, return_row: bool) -> list: #: [IS CONNECTED, connection x, connection y]
+	is_connected = False
+	connection_x = -1
+	connection_y = -1
+	cord_row = get_row(coordinate[0], pencil)
+	cord_col = get_col(coordinate[1], pencil)
+
+	if cord_row.count(i) == 2 and cord_col.count(i) == 2:
+		is_connected = True
+		if return_row:
+			connection_x = cord_row.index(i) if cord_row.index(i) != coordinate[0] else cord_row.index(i, 1)
+			connection_y = coordinate[1]
+		else:
+			connection_x = coordinate[0]
+			connection_y = cord_col.index(i) if cord_col.index(i) != coordinate[1] else cord_col.index(i, 1)
+
+	return [is_connected, connectionx, connection_y]
 
 if __name__ == "__main__":
 	Solver(argv[1])
