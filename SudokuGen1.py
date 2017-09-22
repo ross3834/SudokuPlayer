@@ -6,7 +6,12 @@ Upon generating a complete solution, must delete numbers to create an unambiguou
 
 import sys
 import random
-from SudokuSolver import print_puzzle			
+from SudokuSolver import print_puzzle
+from SudokuSolver import get_cell
+from SudokuSolver import get_row
+from SudokuSolver import get_col
+from SudokuSolver import get_box
+from SudokuSolver import set_cell
 
 #: variables used in multiple functions
 rows = 9
