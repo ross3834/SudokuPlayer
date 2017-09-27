@@ -63,9 +63,10 @@ def load_puzzle(filename:str) -> list:
 def get_cell(x: int, y: int, puzzle: list):
 	return puzzle[x][y]
 
-def set_cell(x: int, y: int, new_val , puzzle: list):
+def set_cell(x: int, y: int, new_val , puzzle: list, verbose: bool = True):
 	puzzle[x][y] = new_val
-	print("Row " + str(x + 1) + ", Col " + str(y + 1) + " has been set to: " + str(new_val))
+	if verbose:
+		print("Row " + str(x + 1) + ", Col " + str(y + 1) + " has been set to: " + str(new_val))
 
 def get_row(row: int, puzzle: list):
 	return puzzle[row]
@@ -84,6 +85,17 @@ def get_box(box_x: int, box_y: int, puzzle: list): #: Indexing starts at 0!!
 		for y in range(y_init, y_bound):
 			box.append(get_cell(x, y, puzzle))
 	return box
+
+def set_box(box_x: int, box_y: int, new_box, puzzle: list):
+	x_init = 3 * box_x
+	y_init = 3 * box_y
+	x_bound = x_init + 3
+	y_bound = y_init + 3
+
+	for x in range(x_init, x_bound):
+		for y in range(y_init, y_bound):
+			for new_value in new_box:
+				set_cell(x, y, new_value, puzzle, verbose=False)
 
 def print_puzzle(puzzle: list):
 	for count, row in enumerate(puzzle):
@@ -296,13 +308,18 @@ def Solver(filename: str):
 					if len(in_naked) >= type and len(in_naked) != len([x for x in p_box if x != [0]]):
 						for extranious in [value for value in range(9) if value not in in_naked]:
 							#: Generate a new list without the values in c_set that are being removed.
-							new_set = [new_set for new_set in p_col[extranious] if new_set not in c_set]
+							new_set = [new_set for new_set in p_box[extranious] if new_set not in c_set]
 
 							if new_set != p_box[extranious]:
-								p_box[extranious] = new_set
-								print("Removed " + str(c_set) + " from box (" + str(subset // 3) + ", " + str(subset % 3) +
-									") and cell (" + str(extranious // 3) + ", " + str(extranious % 3) +
-									") Using naked subsets from boxes")
+								box_x = subset // 3
+								box_y = subset % 3
+								cell_within_x = extranious // 3
+								cell_within_y = extranious % 3
+								cell_x = (box_x * 3) + cell_within_x
+								cell_y = (box_y * 3) + cell_within_y
+
+								set_cell(cell_x, cell_y, new_set, pencil, verbose=False)
+								print("Removed " + str(c_set) + " from (" + str(cell_x) + ", " + str(cell_y) + ") Using naked subsets from boxes")
 
 #------------------------------------------------- CODE BELOW THIS LINE IS USED TO FILL CELLS. CODE ABODE IS TO REMOVE CANDIDATED.-------------------------------------------------------------#
 
@@ -369,15 +386,8 @@ def Solver(filename: str):
 			for blank in mark:
 				blanks.remove(blank)
 		else:
-		#if len(mark) == 0 and past_pencil == pencil:
 			print("pencil: ")
 			print_puzzle(pencil)
-			#for item in pencil:
-				#print(str(item) + '\t')
-
-			#print("blanks: ")
-			#for item in blanks:
-			#	print(item)
 			empty_pencil = True
 			for row in pencil:
 				for item in row:
@@ -393,7 +403,7 @@ def Solver(filename: str):
 		pass_number += 1
 	print("The puzzle has been sucessfully solved after " + str(pass_number - 1) + " passes.")
 
-def find_xwing_patterns(pencil: str) -> list: #: Returns a list of tuples containing the values to remove from rows. 
+def find_xwing_patterns(pencil: str) -> list: #: Returns a list of tuples containing the values to remove from rows.
 	remove = []
 	mark_for_removal = []
 	for i in range(1, 10):
