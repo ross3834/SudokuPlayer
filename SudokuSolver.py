@@ -271,7 +271,8 @@ def Solver(filename: str):
 							new_set = [new_set for new_set in p_row[extranious] if new_set not in c_set]
 
 							if new_set != p_row[extranious]:
-								p_row[extranious] = new_set
+								#p_row[extranious] = new_set
+								set_cell(subset, extranious, new_set, pencil, verbose=False)
 								print("Removed " + str(c_set) + " from (" + str(subset) + ", " + str(extranious) + ") Using naked subsets from rows")
 
 			#: Find naked sets within Cols
@@ -291,7 +292,8 @@ def Solver(filename: str):
 							new_set = [new_set for new_set in p_col[extranious] if new_set not in c_set]
 
 							if new_set != p_col[extranious]:
-								p_col[extranious] = new_set
+								#p_col[extranious] = new_set
+								set_cell(extranious, subset, new_set, pencil, verbose=False)
 								print("Removed " + str(c_set) + " from (" + str(extranious) + ", " + str(subset) + ") Using naked subsets from cols")
 
 			#: Find naked sets within Boxes
@@ -436,6 +438,7 @@ def get_next_connection(value: int, coordinate: tuple, pencil: str, return_row: 
 	cord_col = get_col(coordinate[1], pencil)
 	built_row = []
 	built_col = []
+	print(coordinate)
 
 	for p_set in cord_row:
 		for value in p_set:
@@ -456,8 +459,10 @@ def get_next_connection(value: int, coordinate: tuple, pencil: str, return_row: 
 			else:
 				connection_x = coordinate[0]
 				connection_y = built_col.index([i]) if built_col.index([i]) != coordinate[1] else built_col.index([i], 1)
-#	if connection_x != -1:
-#		print(connection_x, connection_y, sep=', ')
+
+	if is_connected:
+		print_puzzle(pencil)
+		exit()
 	return [is_connected, connection_x, connection_y]
 
 
