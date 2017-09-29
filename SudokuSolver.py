@@ -141,7 +141,7 @@ def Solver(filename: str, verbose = False) -> (list, int):
 			raise IndeterminantPuzzleError(msg)
 
 		pass_number += 1
-	return pass_number - 1
+	return (puzzle, pass_number - 1)
 
 
 def load_puzzle(filename:str) -> list:
@@ -417,5 +417,8 @@ if __name__ == "__main__":
 
         #: Print the result of the passed equation. If the verbose argument was given,
         #: output each step of the computing process.
+	soln = Solver(args.FileName, args.verbose)
 
-	print("The puzzle has been sucessfully solved after " + str(Solver(args.FileName, args.verbose)) + " passes.")
+	if not args.verbose:
+		print_puzzle(soln[0])
+	print("The puzzle has been sucessfully solved after " + str(soln[1]) + " passes.")
