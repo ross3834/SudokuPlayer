@@ -8,12 +8,7 @@ Upon generating a complete solution, must delete numbers to create an unambiguou
 import sys
 import random
 from time import time
-from SudokuSolver import print_puzzle
-from SudokuSolver import get_cell
-from SudokuSolver import get_row
-from SudokuSolver import get_col
-from SudokuSolver import get_box
-from SudokuSolver import set_cell
+from .puzzle_solver import print_puzzle, get_cell, get_row, get_col, get_box, set_cell
 
 
 #: primary function where grid is generated
@@ -141,6 +136,6 @@ def check_zero(grid) -> bool:
             if grid[row_index][column_index] == 0:
                 return False
     return True
- 
+
 if __name__ == "__main__":
     generate_grid()
