@@ -1,41 +1,108 @@
-from sys import argv
-from csv import reader
-import argparse
+"""'
+
+Author: Ross Alexandra
+Most recent update: December 19th, 2017
+Most recent changes:
+		- Updated documentation to allow for future updates to be completed
+		with less downtime when attempting to add addtional features.
+
+		- Removed some code that was not used.
+
+		- Added this header for more up-to-date information on the current
+		standings of this file.
+
+Note:
+	This program is as of current incomplete and highly experimental. As such,
+	much of this code is not in a form that does not reflect an ideal state (
+	ie uncommented, unoptimized, etc.) As I have more time to work on this overall
+	project I will make the code more readable as a first priority before attempting
+	to add new features.
+"""
+
+from csv import reader #: Used to read puzzles loaded from text files.
+import argparse #: Used for reading command line arguments
 
 class InvalidPuzzleError(Exception):
+	"""'
+	An exception to be thrown incase of an invalid puzzle being passed to
+	into the solver.
+
+	In otherwords, this error will be thrown if a puzzle either
+		1) Not matching the correct csv format or,
+		2) A puzzle that has an incorrect setup (example an
+		   incorrect number of rows or columns.
+
+	This error will NOT be thrown if the puzzle cannot be solved, only
+	if the puzzle itself is invalid.
+
+	"""
+
 	def __init__(self, message:str):
 		self.message = message
 
 
 class IndeterminantPuzzleError(Exception):
+	"""'
+	This exception will be thrown if a puzzle is
+	determined to be unsolvable is passed.
+
+	NOTE:
+		As the current version of this program cannot solve all puzzles,
+		and as this is the mechanism by which a puzzle is determined to
+		be solvable, this exception will occasionally be thrown in error.
+
+	"""
 	def __init__(self, message:str):
 		self.message = message
 
-def Solver(filename: str, verbose = False) -> (list, int):
-	if filename[-4:] != ".csv":
+def PuzzleSolver(filename: str, verbose = False) -> (list, int):
+	"""'
+	The function used to solve the actual puzzle. This method does the task of
+	filling in missing cells, and removing candidates that are not currently valid.
+
+	Args:
+		filename (str): The name of the file from which to read the puzzle from.
+		verbose (boolean): If true the program will output each step of its process.
+				   Useful for debugging or for someone who wants to see the
+				   exact steps the program uses to solve each puzzle.
+
+	"""
+
+	if filename[-4:] != ".csv": #: Assume that all files passed are of the csv format.
 		filename += ".csv"
-	puzzle = load_puzzle(filename)
+
+	puzzle = load_puzzle(filename) #: Load the puzzle from the given file.
+
 	if verbose:
+		#: Print the read puzzle to the screen.
 		print("Puzzle loaded from " + filename + " is: ")
 		print_puzzle(puzzle)
 
+	#: Create and populate a list containing the row and columns pairs of all cells that
+	#: do not contain a number.
 	blanks = []
 	for row_index, row in enumerate(puzzle):
 		for column_index, value in enumerate(row):
-			if value == 0:
-				blanks.append([row_index, column_index])
+			if value == 0: #: If the value at this row is 0
+				blanks.append([row_index, column_index]) #: Append its row and column to the list.
 
-	#: Main loop to solve puzzle:
-	pass_number = 1
-	past_pencil = []
+	pass_number = 1 #: Tracks how many full passes of the puzzle have currently happened.
+	past_pencil = [] #: Keeps track of the possiblities that were found on the last pass.
 
-	#: Generate the pencil
+	#: Generate the pencil. The pencil is a list containing the list of possible
+	#: values for each cell within the puzzle.
+	#: Read this line as:
+	#:	For each row and column (ie for each cell), append a list containing the values
+	#:	1 to 9 to this new list being created.
 	pencil = [[[i for i in range(1, 10)] for i in range(9)] for i in range(9)]
 
-	while len(blanks) != 0:
+
+	while len(blanks) != 0: #: While there are still blank tiles within the puzzle
 		if verbose:
 			print("Pass number: " + str(pass_number))
 
+		#: Copy the contents of the current pencil into this variable
+		#: for use after pencil has been changed.
 		past_pencil = list(pencil)
 
 
@@ -54,15 +121,19 @@ def Solver(filename: str, verbose = False) -> (list, int):
 		#: can those numbers exist!
 		c_remove_by_block_colrow(pencil, verbose)
 
-		#: Remove candidated based on naked sets
+		#: Remove candidates using naked sets
 		c_remove_by_naked_set(pencil, verbose)
 #------------------------------------------------- CODE BELOW THIS LINE IS USED TO FILL CELLS. CODE ABODE IS TO REMOVE CANDIDATED.-------------------------------------------------------------#
 
 		#: Find cells with only one posibility
 		for prow_index, pencilled_row in enumerate(pencil):
 			for index, possibilities in enumerate(pencilled_row):
+
+				#: For each cell in the puzzle, if the pencil only has one value for that cell, then
+				#: That value must be the correct value for that cell.
 				if len(possibilities) == 1 and possibilities[0] != 0:
 					if get_cell(prow_index, index, puzzle) == 0:
+						#: Set the cell with only one possibility to that possibility
 						set_cell(prow_index, index,possibilities[0], puzzle, verbose=verbose)
 						if verbose:
 							print_puzzle(puzzle)
