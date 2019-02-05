@@ -3,7 +3,7 @@ language: python
 python: 3.6
 
 install:
-    - pip install -r requirement-dev.txt
+    - pip install -r requirements-dev.txt
 
 script:
     - pytest
