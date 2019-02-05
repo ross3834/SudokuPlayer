@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Ross-Alexandra/SudokuPlayer.svg?branch=master)](https://travis-ci.org/Ross-Alexandra/SudokuPlayer)
+
 # SudokuPlayer
 This project comes in two parts. One is a puzzle solver. This solver
 will solve Sudoku puzzles using human methods (ie, it will not
