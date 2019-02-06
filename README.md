@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/Ross-Alexandra/SudokuPlayer.svg?branch=master)](https://travis-ci.org/Ross-Alexandra/SudokuPlayer)
 [![codecov](https://codecov.io/gh/Ross-Alexandra/SudokuPlayer/branch/master/graph/badge.svg)](https://codecov.io/gh/Ross-Alexandra/SudokuPlayer)
-
-
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 # SudokuPlayer
 This project comes in two parts. One is a puzzle solver. This solver
