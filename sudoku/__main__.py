@@ -1,5 +1,4 @@
-from sudoku import PuzzleSolver
-from sudoku import PuzzleGenerator
+from sudoku import PuzzleGenerator, PuzzleSolver
 
 if __name__ == "__main__":
 
