@@ -1,1 +1,7 @@
+pre-commit
+black
 pytest
+pytest-cov
+codecov
+seed-isort-config
+isort

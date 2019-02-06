@@ -17,7 +17,7 @@ this project.
 ## Creating/Setting up a Virtual Environment
 First create your virtual environment using
 ``` commandline
-python -m venv {environment name}
+python -m virtualenv {environment name}
 ```
 After a short while, a new directory under the name {environment
 name} will be created.
@@ -28,7 +28,7 @@ same on both systems.
 
 ### Linux / MacOS
 ``` commandline
-source {environment name}/bin/activate
+source {environment name}/Scripts/activate
 ```
 
 ### Windows
@@ -38,7 +38,7 @@ source {environment name}/bin/activate
 
 ### Deactivation
 ``` commandline
-{environment name}\Scripts\deactivate
+deactivate
 ```
 
 ## Installing Requirements
