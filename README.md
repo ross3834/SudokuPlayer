@@ -1,4 +1,7 @@
 [![Build Status](https://travis-ci.org/Ross-Alexandra/SudokuPlayer.svg?branch=master)](https://travis-ci.org/Ross-Alexandra/SudokuPlayer)
+[![codecov](https://codecov.io/gh/Ross-Alexandra/SudokuPlayer/branch/master/graph/badge.svg)](https://codecov.io/gh/Ross-Alexandra/SudokuPlayer)
+
+
 
 # SudokuPlayer
 This project comes in two parts. One is a puzzle solver. This solver
