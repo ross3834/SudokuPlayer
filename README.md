@@ -46,3 +46,15 @@ In order to install the development requirements, run
 ``` commandline
 python -m pip install -r requirements-dev.txt
 ```
+
+## Setting up pre-commit
+Once the requirements are installed, pre-commit
+can be used to ensure that builds don't fail
+due to poorly formatted code. This can be done
+with
+``` commandline
+pre-commit install
+```
+After running this command, commits will fail locally
+(and be automatically fixed) rather than failing
+at the build level (and need semi-manual fixes.)
