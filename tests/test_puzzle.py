@@ -17,6 +17,7 @@ from .test_utils import (
         [],
         [[]],
         [[[]]],
+        [[1, 2, 3, 4, 5, 6, 7, 8, 9]],
         generate_invalid_incomplete_puzzle_with_doubled_column(),
         generate_invalid_incomplete_puzzle_with_doubled_row(),
         generate_invalid_incomplete_puzzle_with_doubled_box(),
@@ -58,7 +59,7 @@ def test_getting_invalid_cell_position_raises_value_error(invalid_pos):
     puzzle = Puzzle(generate_valid_complete_puzzle())
 
     with pytest.raises(ValueError):
-        puzzle.get_box(invalid_pos)
+        puzzle.get_cell(invalid_pos)
 
 
 @pytest.mark.parametrize("invalid_pos", ((-1, -1), (-1, 9), (9, 9), (9, -1)))

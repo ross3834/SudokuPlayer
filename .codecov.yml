@@ -2,3 +2,9 @@ coverage:
   precision: 0
   round: down
   range: "100...100"
+
+ignore:
+  - "sudoku/__main__.py"  # Ignore the launch script in testing as it does not represent core functionality.
+
+
+
