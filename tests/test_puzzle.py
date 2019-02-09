@@ -17,7 +17,7 @@ from .test_utils import (
         [],
         [[]],
         [[[]]],
-        [[1, 2, 3, 4, 5, 6, 7, 8, 9]],
+        [[], [], [], [], [], [], [], [], []],
         generate_invalid_incomplete_puzzle_with_doubled_column(),
         generate_invalid_incomplete_puzzle_with_doubled_row(),
         generate_invalid_incomplete_puzzle_with_doubled_box(),
