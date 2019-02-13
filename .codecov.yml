@@ -4,7 +4,4 @@ coverage:
   range: "100...100"
 
 ignore:
-  - "sudoku/__main__.py"  # Ignore the launch script in testing as it does not represent core functionality.
-
-
-
+  - "thegame/__main__.py"  # Ignore the launch script in testing as it does not represent core functionality.

@@ -6,7 +6,7 @@ install:
     - pip install -r requirements-dev.txt
 
 script:
-    - pytest --cov=sudoku
+    - pytest --cov=thegame
     - black . --check
     - isort -rc --check .
 
