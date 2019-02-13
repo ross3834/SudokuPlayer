@@ -78,8 +78,8 @@ class Puzzle:
             0 <= cell_position[0] <= 2 and 0 <= cell_position[1] <= 2
         ):
             raise ValueError(
-                f"cell position: {cell_position} is not a valid cell position. Must be between"
-                f" (0, 0) and (2, 2)"
+                f"cell position: {cell_position} is not a valid cell position from within a box. Must be between"
+                f" (0, 0) and (2, 2) for the relative position in the box."
             )
 
         box = self.get_box(box_position)
