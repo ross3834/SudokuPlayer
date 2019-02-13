@@ -29,6 +29,30 @@ def test_invalid_puzzle_raises_value_error(puzzle_list):
         Puzzle(puzzle_list, validate=True)
 
 
+@pytest.mark.parametrize(
+    "puzzle_list",
+    (
+        generate_invalid_incomplete_puzzle_with_doubled_column(),
+        generate_invalid_incomplete_puzzle_with_doubled_row(),
+        generate_invalid_incomplete_puzzle_with_doubled_box(),
+    ),
+)
+def test_check_valid_returns_false_for_invalid_puzzle(puzzle_list):
+    puzzle = Puzzle(puzzle_list, validate=False)
+
+    assert not puzzle.check_valid(raise_exception=False)
+
+
+@pytest.mark.parametrize(
+    "puzzle_list", ([], [[]], [[[]]], [[], [], [], [], [], [], [], [], []])
+)
+def test_check_valid_raises_value_error_if_all_tests_cannot_be_run(puzzle_list):
+    puzzle = Puzzle(puzzle_list, validate=False)
+
+    with pytest.raises(ValueError):
+        puzzle.check_valid(raise_exception=False)
+
+
 @pytest.mark.parametrize("col_num", (-1, 9))
 def test_getting_invalid_column_number_raises_value_error(col_num):
 
@@ -143,3 +167,15 @@ def test_set_cell_setting_invalid_cell_raises_value_error_on_validate_puzzle(
 
     with pytest.raises(ValueError):
         validate_puzzle.set_cell((0, 0), invalid_val)
+
+
+# The generated puzzle has only one non invalid value, 1.
+@pytest.mark.parametrize("invalid_val", (-1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+def test_set_cell_setting_invalid_cell_undoes_move(invalid_val):
+    valid_puzzle = generate_valid_complete_puzzle()
+
+    puzzle = Puzzle(generate_valid_complete_puzzle(), validate=True)
+
+    puzzle.set_cell((0, 0), invalid_val, undo_move=True)
+
+    assert puzzle._puzzle == valid_puzzle
