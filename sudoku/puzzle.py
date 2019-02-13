@@ -85,7 +85,7 @@ class Puzzle:
         box = self.get_box(box_position)
         return box[cell_position[1]][cell_position[0]]
 
-    def check_valid(self):
+    def check_valid(self, raise_exception=True):
         """ Checks that both the puzzle object is of the valid form, and that the puzzle does
             not appear to break any rules (2 numbers in the same row, column, or box"""
 
@@ -99,37 +99,65 @@ class Puzzle:
             else:
                 return True
 
-        if len(self._puzzle) != 9:
+        error_messages = []
+
+        try:
+            if len(self._puzzle) != 9:
+                error_messages.append(
+                    "A sudoku puzzle must be 9x9. This puzzle does not have 9 rows."
+                )
+
+            if not all([len(row) == 9 for row in self._puzzle]):
+                error_messages.append(
+                    "A suduko puzzle must be 9x9. This puzzle has at least"
+                    "one row not of length 9."
+                )
+
+            if not all([0 <= cell <= 9 for row in self._puzzle for cell in row]):
+                error_messages.append(
+                    "A suduko puzzle can only have values 0 to 9. 0 represents"
+                    "an unknown, and the rest represent their actual numbers."
+                )
+
+            if any([contains_duplicate(row) for row in self._puzzle]):
+                error_messages.append("A duplicate value was found in one of the rows")
+
+            if any([contains_duplicate(self.get_column(i)) for i in range(9)]):
+                error_messages.append(
+                    "A duplicate value was found in one of the columns"
+                )
+
+            for box_x in range(3):
+                for box_y in range(3):
+                    if contains_duplicate(
+                        [item for row in self.get_box((box_x, box_y)) for item in row]
+                    ):
+                        error_messages.append(
+                            f"Duplicates found in box {(box_x, box_y)}."
+                        )
+        except:
+            # Some of these tests assume that the previous check passed.
+            # In other words, if a test fails, other specific tests may
+            # throw IndexErrors because the puzzle is so invalid. In this case
+            # report that the state of the puzzle caused some tests to be
+            # un-runnable, and report the known errors.
             raise ValueError(
-                "A sudoku puzzle must be 9x9. This puzzle does not have" "9 rows."
+                f"Due to the state of the puzzle, some tests became un-runnable.\n"
+                f"There were {len(error_messages)} errors found before an un-runnable"
+                f" test was reached. They are: {error_messages}"
             )
 
-        if not all([len(row) == 9 for row in self._puzzle]):
+        if error_messages and raise_exception:
             raise ValueError(
-                "A suduko puzzle must be 9x9. This puzzle has at least"
-                "one row not of length 9."
+                f"{len(error_messages)} types of errors found in puzzle. "
+                f"They are: {error_messages}"
             )
+        elif error_messages and not raise_exception:
+            return False
 
-        if not all([0 <= cell <= 9 for row in self._puzzle for cell in row]):
-            raise ValueError(
-                "A suduko puzzle can only have values 0 to 9. 0 represents"
-                "an unknown, and the rest represent their actual numbers."
-            )
+        return True
 
-        if any([contains_duplicate(row) for row in self._puzzle]):
-            raise ValueError("A duplicate value was found in one of the rows")
-
-        if any([contains_duplicate(self.get_column(i)) for i in range(9)]):
-            raise ValueError("A duplicate value was found in one of the columns")
-
-        for box_x in range(3):
-            for box_y in range(3):
-                if contains_duplicate(
-                    [item for row in self.get_box((box_x, box_y)) for item in row]
-                ):
-                    raise ValueError(f"Duplicates found in box {(box_x, box_y)}.")
-
-    def set_cell(self, cell_position: tuple, new_val: int):
+    def set_cell(self, cell_position: tuple, new_val: int, undo_move=False):
         """ Set the cell at the passed position."""
 
         if self.validate and not (
@@ -140,7 +168,11 @@ class Puzzle:
                 f" (0, 0) and (8, 8)"
             )
 
+        previous_value = self._puzzle[cell_position[1]][cell_position[0]]
         self._puzzle[cell_position[1]][cell_position[0]] = new_val
 
         if self.validate:
-            self.check_valid()
+            is_valid = self.check_valid(raise_exception=(not undo_move))
+
+            if undo_move and not is_valid:
+                self._puzzle[cell_position[1]][cell_position[0]] = previous_value
