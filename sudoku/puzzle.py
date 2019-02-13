@@ -21,7 +21,7 @@ class Puzzle:
     def get_column(self, col_index: int):
         """ Get the column of the puzzle at the passed index."""
 
-        if not 0 <= col_index <= 8:
+        if self.validate and not 0 <= col_index <= 8:
             raise ValueError(
                 f"Column index: {col_index} is not a valid column index. Must be between 0 and 8."
             )
@@ -31,7 +31,7 @@ class Puzzle:
     def get_row(self, row_index: int):
         """ Get the row of the puzzle at the passed index."""
 
-        if not 0 <= row_index <= 8:
+        if self.validate and not 0 <= row_index <= 8:
             raise ValueError(
                 f"Row index: {row_index} is not a valid row index. Must be between 0 and 8."
             )
@@ -42,7 +42,9 @@ class Puzzle:
         """ Get a list representing the contents of the box at the passed position tuple.
             This can be from (0, 0) to (2, 2)."""
 
-        if not (0 <= box_position[0] <= 2 and 0 <= box_position[1] <= 2):
+        if self.validate and not (
+            0 <= box_position[0] <= 2 and 0 <= box_position[1] <= 2
+        ):
             raise ValueError(
                 f"box position: {box_position} is not a valid box position. Must be between"
                 f" (0,0) and (2,2)"
@@ -58,7 +60,9 @@ class Puzzle:
 
     def get_cell(self, cell_position: tuple):
         """ Get the value of the cell back from the passed position"""
-        if not (0 <= cell_position[0] <= 8 and 0 <= cell_position[1] <= 8):
+        if self.validate and not (
+            0 <= cell_position[0] <= 8 and 0 <= cell_position[1] <= 8
+        ):
             raise ValueError(
                 f"box position: {cell_position} is not a valid box position. Must be between"
                 f" (0,0) and (8,8)"
@@ -69,13 +73,17 @@ class Puzzle:
     def get_cell_from_box(self, box_position: tuple, cell_position: tuple):
         """ Returns the absolute position of a cell given its relative position
             in the passed box."""
-        if not (0 <= box_position[0] <= 2 and 0 <= box_position[1] <= 2):
+        if self.validate and not (
+            0 <= box_position[0] <= 2 and 0 <= box_position[1] <= 2
+        ):
             raise ValueError(
                 f"box position: {box_position} is not a valid box position. Must be between"
                 f" (0,0) and (2,2)"
             )
 
-        if not (0 <= cell_position[0] <= 2 and 0 <= cell_position[1] <= 2):
+        if self.validate and not (
+            0 <= cell_position[0] <= 2 and 0 <= cell_position[1] <= 2
+        ):
             raise ValueError(
                 f"cell position: {cell_position} is not a valid cell position. Must be between"
                 f" (0, 0) and (2, 2)"
@@ -89,7 +97,6 @@ class Puzzle:
             not appear to break any rules (2 numbers in the same row, column, or box"""
 
         def contains_duplicate(l: list):
-            print("--------------", l, "--------------", sep="\n")
 
             l = [item for item in l if item != 0]
             length = len(l)
@@ -132,7 +139,9 @@ class Puzzle:
     def set_cell(self, cell_position: tuple, new_val: int):
         """ Set the cell at the passed position."""
 
-        if not (0 <= cell_position[0] <= 8 and 0 <= cell_position[1] <= 8):
+        if self.validate and not (
+            0 <= cell_position[0] <= 8 and 0 <= cell_position[1] <= 8
+        ):
             raise ValueError(
                 f"cell position: {cell_position} is not a valid cell position. Must be between"
                 f" (0, 0) and (8, 8)"
