@@ -73,13 +73,6 @@ class Puzzle:
     def get_cell_from_box(self, box_position: tuple, cell_position: tuple):
         """ Returns the absolute position of a cell given its relative position
             in the passed box."""
-        if self.validate and not (
-            0 <= box_position[0] <= 2 and 0 <= box_position[1] <= 2
-        ):
-            raise ValueError(
-                f"box position: {box_position} is not a valid box position. Must be between"
-                f" (0,0) and (2,2)"
-            )
 
         if self.validate and not (
             0 <= cell_position[0] <= 2 and 0 <= cell_position[1] <= 2
