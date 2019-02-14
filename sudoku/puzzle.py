@@ -26,6 +26,8 @@ class Puzzle:
                 f"Column index: {col_index} is not a valid column index. Must be between 0 and 8."
             )
 
+        column = [row[col_index] for row in self._puzzle]
+
         return [row[col_index] for row in self._puzzle]
 
     def get_row(self, row_index: int):
@@ -36,9 +38,11 @@ class Puzzle:
                 f"Row index: {row_index} is not a valid row index. Must be between 0 and 8."
             )
 
-        return self._puzzle[row_index]
+        row = self._puzzle[row_index]
 
-    def get_box(self, box_position: tuple):
+        return row
+
+    def get_box(self, box_position: tuple, flatten=False):
         """ Get a list representing the contents of the box at the passed position tuple.
             This can be from (0, 0) to (2, 2)."""
 
@@ -52,11 +56,20 @@ class Puzzle:
         box_x = box_position[0] * 3
         box_y = box_position[1] * 3
 
-        return [
-            self._puzzle[box_y][box_x : box_x + 3],
-            self._puzzle[box_y + 1][box_x : box_x + 3],
-            self._puzzle[box_y + 2][box_x : box_x + 3],
-        ]
+        if flatten:
+            box = (
+                self._puzzle[box_y][box_x : box_x + 3]
+                + self._puzzle[box_y + 1][box_x : box_x + 3]
+                + self._puzzle[box_y + 2][box_x : box_x + 3]
+            )
+        else:
+            box = [
+                self._puzzle[box_y][box_x : box_x + 3],
+                self._puzzle[box_y + 1][box_x : box_x + 3],
+                self._puzzle[box_y + 2][box_x : box_x + 3],
+            ]
+
+        return box
 
     def get_cell(self, cell_position: tuple):
         """ Get the value of the cell back from the passed position"""
@@ -84,6 +97,49 @@ class Puzzle:
 
         box = self.get_box(box_position)
         return box[cell_position[1]][cell_position[0]]
+
+    def get_box_from_cell(self, cell_position: tuple, flatten=False):
+        """ Returns that the box that the cell is in.
+            Don't check for validation as this is just a helper for converting
+            a cell to its box (ie, the cell 7,5 is in box 2,1).
+        """
+
+        if not (0 <= cell_position[0] <= 8 and 0 <= cell_position[1] <= 8):
+            raise ValueError(
+                f"cell position: {cell_position} is not a valid cell position. Must be between"
+                f" (0, 0) and (8, 8)"
+            )
+
+        box_x = cell_position[0] // 3
+        box_y = cell_position[1] // 3
+
+        return self.get_box((box_x, box_y), flatten=flatten)
+
+    def is_equal(self, puzzle):
+        return puzzle._puzzle == self._puzzle
+
+    def __str__(self):
+
+        puzzle_string = ""
+
+        for cell_y in range(9):
+            puzzle_string += "|"
+            for cell_x in range(9):
+                cell_value = self.get_cell((cell_x, cell_y))
+
+                if cell_value == 0:
+                    puzzle_string += "   "
+                else:
+                    puzzle_string += f" {cell_value} "
+
+                if cell_x == 2 or cell_x == 5:
+                    puzzle_string += "|"
+            if cell_y == 2 or cell_y == 5:
+                puzzle_string += "\n-----------------------------\n"
+            else:
+                puzzle_string += "\n"
+
+        return puzzle_string
 
     def check_valid(self, raise_exception=True):
         """ Checks that both the puzzle object is of the valid form, and that the puzzle does
