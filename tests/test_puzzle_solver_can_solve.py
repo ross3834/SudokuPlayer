@@ -42,5 +42,5 @@ def test_unsolvable_puzzle_raises_value_error(puzzle_list):
 
     ps = PuzzleSolver(Puzzle(puzzle_list, validate=False))
 
-    with pytest.raises(ValueError):
+    with pytest.raises(PuzzleSolver.UnsolvablePuzzleException):
         ps.solve_puzzle()

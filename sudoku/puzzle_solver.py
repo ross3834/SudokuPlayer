@@ -72,8 +72,8 @@ class PuzzleSolver:
             if (
                 past_puzzle == self._puzzle
                 and past_possibilities == self._missing_values
-            ) or not self._puzzle.check_valid():
-                raise ValueError(
+            ) or not self._puzzle.check_valid(raise_exception=False):
+                raise self.UnsolvablePuzzleException(
                     "Puzzle passed to the solver is either unsolvable or cannot be"
                     "solved using the methods this solver knows."
                 )
@@ -83,3 +83,6 @@ class PuzzleSolver:
 
         if verbose:
             print(self._puzzle)
+
+    class UnsolvablePuzzleException(ValueError):
+        pass
