@@ -87,6 +87,14 @@ def test_getting_invalid_cell_position_raises_value_error(invalid_pos):
 
 
 @pytest.mark.parametrize("invalid_pos", ((-1, -1), (-1, 9), (9, 9), (9, -1)))
+def test_getting_box_of_invalid_cell_position_raises_value_error(invalid_pos):
+    puzzle = Puzzle(generate_valid_complete_puzzle())
+
+    with pytest.raises(ValueError):
+        puzzle.get_box_from_cell(invalid_pos)
+
+
+@pytest.mark.parametrize("invalid_pos", ((-1, -1), (-1, 9), (9, 9), (9, -1)))
 def test_setting_invalid_cell_position_raises_value_error(invalid_pos):
     puzzle = Puzzle(generate_valid_complete_puzzle())
 
@@ -144,6 +152,14 @@ def test_get_cell_from_box_returns_correct_cell():
     assert cell == 1
 
 
+def test_get_box_from_cell_returns_correct_box():
+    puzzle = Puzzle(generate_valid_complete_puzzle())
+
+    box = puzzle.get_box_from_cell((0, 0))
+
+    assert box == puzzle.get_box((0, 0))
+
+
 def test_get_cell_returns_correct_value():
     puzzle = Puzzle(generate_valid_complete_puzzle())
 
@@ -179,3 +195,23 @@ def test_set_cell_setting_invalid_cell_undoes_move(invalid_val):
     puzzle.set_cell((0, 0), invalid_val, undo_move=True)
 
     assert puzzle._puzzle == valid_puzzle
+
+
+def test_str_returns_a_string():
+    puzzle = Puzzle(generate_valid_incomplete_puzzle())
+
+    assert isinstance(str(puzzle), str)
+
+
+def test_is_equal_returns_true_for_equal_puzzles():
+    puzzle1 = Puzzle(generate_valid_incomplete_puzzle())
+    puzzle2 = Puzzle(generate_valid_incomplete_puzzle())
+
+    assert puzzle1.is_equal(puzzle2)
+
+
+def test_is_equal_returns_false_for_unequal_puzzles():
+    puzzle1 = Puzzle(generate_valid_incomplete_puzzle())
+    puzzle2 = Puzzle(generate_valid_complete_puzzle())
+
+    assert not puzzle1.is_equal(puzzle2)

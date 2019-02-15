@@ -116,6 +116,8 @@ class Puzzle:
         return self.get_box((box_x, box_y), flatten=flatten)
 
     def is_equal(self, puzzle):
+        """ Don't implement __eq__ as we don't want to implement __hash__.
+        """
         return puzzle._puzzle == self._puzzle
 
     def __str__(self):
