@@ -1,3 +1,6 @@
+import logging
+
+
 class PuzzleSolver:
     def __init__(self, puzzle):
 
@@ -63,7 +66,7 @@ class PuzzleSolver:
         while not self._is_puzzle_solved():
 
             if verbose:
-                print(self._puzzle)
+                logging.info(str(self._puzzle))
 
             self._find_missing_values()
             self._fill_trivial_cells()
@@ -82,7 +85,7 @@ class PuzzleSolver:
                 past_possibilities = self._missing_values
 
         if verbose:
-            print(self._puzzle)
+            logging.info(str(self._puzzle))
 
     class UnsolvablePuzzleException(ValueError):
         pass

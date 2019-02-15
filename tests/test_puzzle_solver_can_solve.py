@@ -10,6 +10,8 @@
     pytest.mark.slow.
 """
 
+from unittest.mock import patch
+
 import pytest
 
 from sudoku import Puzzle, PuzzleSolver
@@ -28,6 +30,15 @@ def test_trivial_puzzle():
     ps.solve_puzzle()
 
     assert ps._is_puzzle_solved()
+
+
+@patch("sudoku.puzzle_solver.logging")
+def test_solving_with_verbose_true_prints(logging_mock):
+    ps = PuzzleSolver(Puzzle(generate_valid_incomplete_puzzle()))
+
+    ps.solve_puzzle(True)
+
+    assert logging_mock.info.called
 
 
 @pytest.mark.parametrize(
