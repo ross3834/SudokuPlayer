@@ -43,11 +43,11 @@ class PuzzleSolver:
 
     def _apply_patterns(self):
         for pattern in self._patterns:
-            pass
+            pattern.apply_to(self._puzzle)
 
     def _is_puzzle_solved(self):
-        for possibilities in self._missing_values.values():
-            if len(possibilities) != 0:
+        for position, possibilities in self._missing_values.items():
+            if len(possibilities) != 0 or self._puzzle.get_cell(position) == 0:
                 return False
 
         return True
@@ -58,6 +58,7 @@ class PuzzleSolver:
     def solve_puzzle(self, verbose=False):
 
         past_puzzle = None
+        past_possibilities = None
 
         while not self._is_puzzle_solved():
 
@@ -68,11 +69,17 @@ class PuzzleSolver:
             self._fill_trivial_cells()
             self._apply_patterns()
 
-            if past_puzzle == self._puzzle:
-                print("Puzzle can't be solved currently")
-                break
+            if (
+                past_puzzle == self._puzzle
+                and past_possibilities == self._missing_values
+            ) or not self._puzzle.check_valid():
+                raise ValueError(
+                    "Puzzle passed to the solver is either unsolvable or cannot be"
+                    "solved using the methods this solver knows."
+                )
             else:
                 past_puzzle = self._puzzle
+                past_possibilities = self._missing_values
 
         if verbose:
             print(self._puzzle)

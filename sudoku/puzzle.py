@@ -28,7 +28,7 @@ class Puzzle:
 
         column = [row[col_index] for row in self._puzzle]
 
-        return [row[col_index] for row in self._puzzle]
+        return column
 
     def get_row(self, row_index: int):
         """ Get the row of the puzzle at the passed index."""
