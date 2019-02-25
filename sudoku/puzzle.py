@@ -1,6 +1,3 @@
-import logging
-
-
 class Puzzle:
     def __init__(self, puzzle: list, validate=True):
         """ Create an object that represents a Sudoku puzzle.
@@ -114,6 +111,29 @@ class Puzzle:
         box_y = cell_position[1] // 3
 
         return self.get_box((box_x, box_y), flatten=flatten)
+
+    def get_chunk(self, initial_position, final_position):
+
+        if self.validate and (
+            not 0 <= initial_position[0] <= final_position[0] < 9
+            or not 0 <= initial_position[1] <= final_position[1] < 9
+        ):
+            raise ValueError(
+                f"Chunk position: {initial_position} "
+                f"-> {final_position} is invalid.\n"
+                f"Final must be greater or equal to intial.\n"
+                f"All values must be within 0 to 8."
+            )
+
+        chunk = []
+        for cell_y in range(initial_position[1], final_position[1] + 1):
+            inner_chunk = []
+            for cell_x in range(initial_position[0], final_position[0] + 1):
+                inner_chunk.append(self.get_cell((cell_x, cell_y)))
+
+            chunk.append(inner_chunk)
+
+        return chunk
 
     def is_equal(self, puzzle):
         """ Don't implement __eq__ as we don't want to implement __hash__.

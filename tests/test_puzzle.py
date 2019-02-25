@@ -120,6 +120,19 @@ def test_getting_invalid_box_from_puzzle_when_getting_cell_raises_value_error(
         puzzle.get_cell_from_box((0, 0), invalid_pos)
 
 
+@pytest.mark.parametrize(
+    "initial_position, final_position",
+    [((-1, -1), (2, 2)), ((2, 2), (9, 9)), ((5, 5), (2, 2))],
+)
+def test_getting_invalid_chunk_from_puzzle_raises_valid_error(
+    initial_position, final_position
+):
+    puzzle = Puzzle(generate_valid_complete_puzzle())
+
+    with pytest.raises(ValueError):
+        puzzle.get_chunk(initial_position, final_position)
+
+
 def test_getting_box_returns_correct_box():
     puzzle = Puzzle(generate_valid_complete_puzzle())
 
@@ -166,6 +179,14 @@ def test_get_cell_returns_correct_value():
     cell = puzzle.get_cell((0, 0))
 
     assert cell == 1
+
+
+def test_get_chunk_returns_the_correct_chunk():
+    puzzle = Puzzle(generate_valid_complete_puzzle())
+
+    chunk = puzzle.get_chunk((0, 0), (2, 2))
+
+    assert chunk == puzzle.get_box((0, 0))
 
 
 def test_set_cell_sets_cell():
