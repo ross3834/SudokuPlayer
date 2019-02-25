@@ -122,6 +122,21 @@ class Puzzle:
         return puzzle._puzzle == self._puzzle
 
     def __str__(self):
+        """
+        Returns a string representing the puzzle.
+        Ie, a returned string may look like:
+            | 1  2  3 | 4  5  6 | 7  8  9
+            | 4  5  6 | 7  8  9 | 1     3
+            | 7  8  9 | 1  2  3 | 4  5  6
+            -----------------------------
+            | 2  3  1 | 5  6  4 | 8  9  7
+            | 5     4 | 8  9  7 | 2  3  1
+            | 8  9  7 | 2  3  1 | 5  6  4
+            -----------------------------
+            | 3  1  2 | 6  4  5 | 9  7  8
+            | 6  4  5 | 9  7  8 | 3  1  2
+            | 9  7  8 | 3  1  2 | 6  4  5
+        """
 
         puzzle_string = ""
 
