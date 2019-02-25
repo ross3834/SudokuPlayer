@@ -99,12 +99,12 @@ class Puzzle:
         return box[cell_position[1]][cell_position[0]]
 
     def get_box_from_cell(self, cell_position: tuple, flatten=False):
-        """ Returns that the box that the cell is in.
-            Don't check for validation as this is just a helper for converting
-            a cell to its box (ie, the cell 7,5 is in box 2,1).
+        """ Returns the box that the cell is in.
         """
 
-        if not (0 <= cell_position[0] <= 8 and 0 <= cell_position[1] <= 8):
+        if self.validate and not (
+            0 <= cell_position[0] <= 8 and 0 <= cell_position[1] <= 8
+        ):
             raise ValueError(
                 f"cell position: {cell_position} is not a valid cell position. Must be between"
                 f" (0, 0) and (8, 8)"
