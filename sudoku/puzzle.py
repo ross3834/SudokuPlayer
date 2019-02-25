@@ -26,7 +26,9 @@ class Puzzle:
                 f"Column index: {col_index} is not a valid column index. Must be between 0 and 8."
             )
 
-        return [row[col_index] for row in self._puzzle]
+        column = [row[col_index] for row in self._puzzle]
+
+        return column
 
     def get_row(self, row_index: int):
         """ Get the row of the puzzle at the passed index."""
@@ -36,9 +38,11 @@ class Puzzle:
                 f"Row index: {row_index} is not a valid row index. Must be between 0 and 8."
             )
 
-        return self._puzzle[row_index]
+        row = self._puzzle[row_index]
 
-    def get_box(self, box_position: tuple):
+        return row
+
+    def get_box(self, box_position: tuple, flatten=False):
         """ Get a list representing the contents of the box at the passed position tuple.
             This can be from (0, 0) to (2, 2)."""
 
@@ -52,11 +56,20 @@ class Puzzle:
         box_x = box_position[0] * 3
         box_y = box_position[1] * 3
 
-        return [
-            self._puzzle[box_y][box_x : box_x + 3],
-            self._puzzle[box_y + 1][box_x : box_x + 3],
-            self._puzzle[box_y + 2][box_x : box_x + 3],
-        ]
+        if flatten:
+            box = (
+                self._puzzle[box_y][box_x : box_x + 3]
+                + self._puzzle[box_y + 1][box_x : box_x + 3]
+                + self._puzzle[box_y + 2][box_x : box_x + 3]
+            )
+        else:
+            box = [
+                self._puzzle[box_y][box_x : box_x + 3],
+                self._puzzle[box_y + 1][box_x : box_x + 3],
+                self._puzzle[box_y + 2][box_x : box_x + 3],
+            ]
+
+        return box
 
     def get_cell(self, cell_position: tuple):
         """ Get the value of the cell back from the passed position"""
@@ -84,6 +97,67 @@ class Puzzle:
 
         box = self.get_box(box_position)
         return box[cell_position[1]][cell_position[0]]
+
+    def get_box_from_cell(self, cell_position: tuple, flatten=False):
+        """ Returns the box that the cell is in.
+        """
+
+        if self.validate and not (
+            0 <= cell_position[0] <= 8 and 0 <= cell_position[1] <= 8
+        ):
+            raise ValueError(
+                f"cell position: {cell_position} is not a valid cell position. Must be between"
+                f" (0, 0) and (8, 8)"
+            )
+
+        box_x = cell_position[0] // 3
+        box_y = cell_position[1] // 3
+
+        return self.get_box((box_x, box_y), flatten=flatten)
+
+    def is_equal(self, puzzle):
+        """ Don't implement __eq__ as we don't want to implement __hash__.
+            For more information see: https://docs.python.org/3.6/reference/datamodel.html#object.__hash__
+        """
+        return puzzle._puzzle == self._puzzle
+
+    def __str__(self):
+        """
+        Returns a string representing the puzzle.
+        Ie, a returned string may look like:
+            | 1  2  3 | 4  5  6 | 7  8  9
+            | 4  5  6 | 7  8  9 | 1     3
+            | 7  8  9 | 1  2  3 | 4  5  6
+            -----------------------------
+            | 2  3  1 | 5  6  4 | 8  9  7
+            | 5     4 | 8  9  7 | 2  3  1
+            | 8  9  7 | 2  3  1 | 5  6  4
+            -----------------------------
+            | 3  1  2 | 6  4  5 | 9  7  8
+            | 6  4  5 | 9  7  8 | 3  1  2
+            | 9  7  8 | 3  1  2 | 6  4  5
+        """
+
+        puzzle_string = ""
+
+        for cell_y in range(9):
+            puzzle_string += "|"
+            for cell_x in range(9):
+                cell_value = self.get_cell((cell_x, cell_y))
+
+                if cell_value == 0:
+                    puzzle_string += "   "
+                else:
+                    puzzle_string += f" {cell_value} "
+
+                if cell_x == 2 or cell_x == 5:
+                    puzzle_string += "|"
+            if cell_y == 2 or cell_y == 5:
+                puzzle_string += "\n-----------------------------\n"
+            else:
+                puzzle_string += "\n"
+
+        return puzzle_string
 
     def check_valid(self, raise_exception=True):
         """ Checks that both the puzzle object is of the valid form, and that the puzzle does
