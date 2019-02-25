@@ -54,7 +54,7 @@ class PuzzleSolver:
             if len(possibilities) != 0 or self._puzzle.get_cell(position) == 0:
                 return False
 
-        return True
+        return self._puzzle.check_valid(raise_exception=False)
 
     def register_pattern(self, pattern):
         self._patterns.append(pattern)
