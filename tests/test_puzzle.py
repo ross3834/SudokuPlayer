@@ -205,9 +205,8 @@ def test_str_returns_a_string():
 
 def test_is_equal_returns_true_for_equal_puzzles():
     puzzle1 = Puzzle(generate_valid_incomplete_puzzle())
-    puzzle2 = Puzzle(generate_valid_incomplete_puzzle())
 
-    assert puzzle1.is_equal(puzzle2)
+    assert puzzle1.is_equal(puzzle1)
 
 
 def test_is_equal_returns_false_for_unequal_puzzles():
