@@ -11,8 +11,9 @@ class PuzzleSolver:
         self._find_missing_values()
 
     def _find_missing_values(self):
-        """ Generate and return a dictionary of all the possibilities
-            for each cell without a value (ie a 0 value.)
+        """ Generate a dictionary of all the possibilities
+            for each cell without a value (ie a 0 value.) and
+            set _missing_values to it.
         """
         missing_values = {}
         for cell_x in range(9):
