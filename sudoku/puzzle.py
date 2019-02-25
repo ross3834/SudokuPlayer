@@ -117,6 +117,7 @@ class Puzzle:
 
     def is_equal(self, puzzle):
         """ Don't implement __eq__ as we don't want to implement __hash__.
+            For more information see: https://docs.python.org/3.6/reference/datamodel.html#object.__hash__
         """
         return puzzle._puzzle == self._puzzle
 
