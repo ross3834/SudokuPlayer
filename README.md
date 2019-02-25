@@ -10,8 +10,27 @@ use back tracking to brute force the puzzle.) The other part is
 generating Sudoku puzzles.
 
 # Usage
-As of current, this project is being re-built. There is currently
-no code written. Thus, there is no usage yet.
+This usage is broken into two seperate modules, a sudoku solver, and a sudoku generator.
+
+## PuzzleSolver
+To run the algorithm on a basic puzzle, and to ensure that the code works for basic cases, simply use
+``` python
+python -m sudoku
+```
+
+To instead use this algorithm on your own puzzle, simply import the project, and create and run a puzzle solver.
+```python
+import sudoku
+
+p = sudoku.Puzzle(YOUR_PUZZLE)
+ps = sudoku.PuzzleSover(p)
+
+ps.solve_puzzle(verbose=True)
+```
+Using this setup, the solution and steps to your puzzle (if solvable) will be logged to the INFO level.
+
+## PuzzleGenerator
+The puzzle generation feature has not yet been implemented.
 
 # Setup
 This will guide you through setting up the environment to develop on
