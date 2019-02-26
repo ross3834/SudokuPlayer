@@ -3,13 +3,14 @@ from sudoku import Puzzle
 
 class Pattern:
 
+    # Constants for patterns
     UNSPECIFIED = 0
     MATCHING = 1
     NONMATCH = 2
     FILLED = 3
     UNFILLED = 4
 
-    def __init__(self, pattern, candidate_reduction=False):
+    def __init__(self, pattern, resolution, candidate_reduction=False):
         """
         Args:
             pattern(list): A list of lists representing the
@@ -25,6 +26,9 @@ class Pattern:
                            a value, and position (1,3) must NOT have a value. Finally
                            (0,1), (1,1), (1,2) can have any value.
 
+            resolution(list): A list of lists used to tell the pattern how it
+                              should react to a match.
+
             candidate_reduction(bool): If True, then this pattern will
                                        alter the candidates, rather than
                                        the puzzle itself. If False, then
@@ -37,16 +41,82 @@ class Pattern:
         self.height = len(pattern)
         self.candidate_reduction = candidate_reduction
 
-    def apply_to(self, puzzle: Puzzle):
+    def apply_to(self, puzzle: Puzzle, candidates: dict):
+        if self.candidate_reduction:
+            self.apply_to_candidate_dict(candidates)
+        else:
+            self.apply_to_puzzle(puzzle)
+
+    def apply_to_puzzle(self, puzzle: Puzzle):
         """ Apply the pattern to the puzzle, finding
             all matches, and returning a PatternResponse
-            object, to be used by the puzzle.
+            object to be used by the puzzle.
         """
-        pass
 
-    def _does_match(self, chunk):
+        chunk_init_y = 0
+
+        for chunk_y in range(self.height, 9):
+            chunk_init_x = 0
+            for chunk_x in range(self.width, 9):
+
+                # Check if the pattern applies if all the "MATCHING" values
+                # equal matching_with (ie, check each possible value, and
+                # resolve on each match.
+                for matching_with in range(1, 10):
+                    chunk = puzzle.get_chunk(
+                        (chunk_init_x, chunk_init_y), (chunk_x, chunk_y)
+                    )
+
+                    if self._does_match(chunk, matching_equals=matching_with):
+                        pass  # somehow resolve this.
+                chunk_init_x += 1
+            chunk_init_y += 1
+
+    def apply_to_candidate_dict(self, candidates: dict):
+        """ Apply the pattern to the list of candidates,
+            all matches, and returning a PatternResponse
+            object to be used by the puzzle.
+        """
+        chunk_init_y = 0
+
+        for chunk_final_y in range(self.height, 9):
+            chunk_init_x = 0
+
+            for chunk_final_x in range(self.width, 9):
+
+                contained_positions = [
+                    (x, y)
+                    for x in range(chunk_init_x, chunk_final_x + 1)
+                    for y in range(chunk_init_y, chunk_final_y + 1)
+                ]
+                chunk_flattened = [
+                    candidates[position] for position in contained_positions
+                ]
+
+                # Break the flattened chunk into a 2D list based on the width of
+                # the pattern.
+                chunk = [
+                    chunk_flattened[i : i + self.width]
+                    for i in range(0, len(chunk_flattened), self.width)
+                ]
+
+                # Check if the pattern applies if all the "MATCHING" values
+                # equal matching_with (ie, check each possible value, and
+                # resolve on each match.
+                for matching_with in range(1, 10):
+                    if self._does_match(chunk, matching_with):
+                        pass  # Somehow resolve this.
+
+                chunk_init_x += 1
+            chunk_init_y += 1
+
+    def _does_match(self, chunk, matching_equals):
         """ Takes a 'chunk' of the puzzle of the same dimensions of
             the pattern, and checks to see if the pattern matches
             the chunk."""
 
         pass
+
+
+class PatternResponse:
+    pass

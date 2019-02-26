@@ -47,7 +47,7 @@ class PuzzleSolver:
 
     def _apply_patterns(self):
         for pattern in self._patterns:
-            pattern.apply_to(self._puzzle)
+            pattern.apply_to(self._puzzle, self._missing_values)
 
     def _is_puzzle_solved(self):
         for position, possibilities in self._missing_values.items():
