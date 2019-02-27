@@ -1,3 +1,5 @@
+from collections import Iterable
+
 from sudoku import Puzzle
 
 
@@ -6,7 +8,7 @@ class Pattern:
     # Constants for patterns
     UNSPECIFIED = 0
     MATCHING = 1
-    NONMATCH = 2
+    NON_MATCHING = 2
     FILLED = 3
     UNFILLED = 4
 
@@ -17,7 +19,7 @@ class Pattern:
                            smallest possible grid the pattern
                            can fit in, with the pattern in it.
                            eg)
-                                [[FILLED, UNSPECIFIED, MATCHING, NONMATCHING],
+                                [[FILLED, UNSPECIFIED, MATCHING, NON_MATCHING],
                                  [MATCHING, UNSPECIFIED, UNSPECIFIED, UNFILLED]]
 
                            Represents a 4x2 pattern where the values at
@@ -69,6 +71,7 @@ class Pattern:
 
                     if self._does_match(chunk, matching_equals=matching_with):
                         pass  # somehow resolve this.
+
                 chunk_init_x += 1
             chunk_init_y += 1
 
@@ -115,7 +118,38 @@ class Pattern:
             the pattern, and checks to see if the pattern matches
             the chunk."""
 
-        pass
+        for y in range(0, self.height):
+            for x in range(0, self.width):
+
+                cell = chunk[y][x]
+                if not isinstance(cell, Iterable):
+                    cell = [cell]
+
+                # Check to see if ANY of the cells don't match
+                # the pattern. If any cell has any condition not
+                # met, then return False.
+                cell_filled = len(cell) == 1 and cell is not [0]
+                cell_not_matching = matching_equals not in cell
+                cell_matching = matching_equals in cell
+                cell_not_filled = len(cell) != 0 or cell is [0]
+
+                if self._pattern[y][x] is self.UNFILLED:
+                    if cell_filled:
+                        return False
+                elif self._pattern[y][x] is self.MATCHING:
+                    if cell_not_matching:
+                        return False
+                elif self._pattern[y][x] is self.NON_MATCHING:
+                    if cell_matching:
+                        return False
+                elif self._pattern[y][x] is self.FILLED:
+                    if cell_not_filled:
+                        return False
+
+        # If we have not returned False yet, then
+        # the pattern should be an exact match, so
+        # return True.
+        return True
 
 
 class PatternResponse:
