@@ -47,7 +47,18 @@ class PuzzleSolver:
 
     def _apply_patterns(self):
         for pattern in self._patterns:
-            pattern.apply_to(self._puzzle, self._missing_values)
+            pattern_response = pattern.apply_to(self._puzzle, self._missing_values)
+
+            for (
+                position,
+                value,
+                candidate_reduction,
+            ) in pattern_response.get_responses():
+                if candidate_reduction:
+                    self._missing_values[position].remove(value)
+
+                else:
+                    self._puzzle.set_cell(cell_position=position, new_val=value)
 
     def _is_puzzle_solved(self):
         for position, possibilities in self._missing_values.items():

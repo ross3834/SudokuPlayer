@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from sudoku import Puzzle, PuzzleSolver
 from tests.test_utils import (
@@ -28,7 +28,7 @@ def test_apply_patterns_applies_all_patterns():
 
     ps = PuzzleSolver(Puzzle(generate_valid_complete_puzzle()))
 
-    pattern_mock = Mock()
+    pattern_mock = MagicMock()
     ps.register_pattern(pattern_mock)
 
     ps._apply_patterns()
