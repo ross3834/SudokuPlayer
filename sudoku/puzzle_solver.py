@@ -59,6 +59,7 @@ class PuzzleSolver:
 
                 else:
                     self._puzzle.set_cell(cell_position=position, new_val=value)
+                    self._missing_values[position] = []
 
     def _is_puzzle_solved(self):
         for position, possibilities in self._missing_values.items():
@@ -85,7 +86,7 @@ class PuzzleSolver:
             self._apply_patterns()
 
             if (
-                past_puzzle == self._puzzle
+                self._puzzle.is_equal(past_puzzle)
                 and past_possibilities == self._missing_values
             ) or not self._puzzle.check_valid(raise_exception=False):
                 raise self.UnsolvablePuzzleException(

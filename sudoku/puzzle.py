@@ -139,6 +139,9 @@ class Puzzle:
         """ Don't implement __eq__ as we don't want to implement __hash__.
             For more information see: https://docs.python.org/3.6/reference/datamodel.html#object.__hash__
         """
+        if puzzle is None:
+            return False
+
         return puzzle._puzzle == self._puzzle
 
     def __str__(self):

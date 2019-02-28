@@ -58,3 +58,51 @@ def test_register_pattern_adds_the_pattern_to_the_list():
     ps.register_pattern(pattern)
 
     assert pattern in ps._patterns
+
+
+def test_pattern_response_reduces_candidates():
+
+    ps = PuzzleSolver(Puzzle(generate_valid_incomplete_puzzle()))
+    missing_value_position = (0, 0)
+
+    pattern_mock = Mock()
+    pattern_response_mock = Mock()
+
+    # Wrap in an extra tuple, as pytest assumes this tuple implies that
+    # each return should give a different value.
+    pattern_response_mock.get_responses.return_value = (
+        (missing_value_position, 1, True),
+    )
+
+    pattern_mock.apply_to.return_value = pattern_response_mock
+
+    assert 1 in ps._missing_values[missing_value_position]
+
+    ps.register_pattern(pattern_mock)
+    ps._apply_patterns()
+
+    assert 1 not in ps._missing_values[missing_value_position]
+
+
+def test_pattern_response_fills_cell():
+
+    ps = PuzzleSolver(Puzzle(generate_valid_incomplete_puzzle()))
+    missing_value_position = (0, 0)
+
+    pattern_mock = Mock()
+    pattern_response_mock = Mock()
+
+    # Wrap in an extra tuple, as pytest assumes this tuple implies that
+    # each return should give a different value.
+    pattern_response_mock.get_responses.return_value = (
+        (missing_value_position, 1, False),
+    )
+
+    pattern_mock.apply_to.return_value = pattern_response_mock
+
+    assert ps._puzzle.get_cell(missing_value_position) == 0
+
+    ps.register_pattern(pattern_mock)
+    ps._apply_patterns()
+
+    assert ps._puzzle.get_cell(missing_value_position) == 1
