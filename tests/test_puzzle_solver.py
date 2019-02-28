@@ -106,3 +106,4 @@ def test_pattern_response_fills_cell():
     ps._apply_patterns()
 
     assert ps._puzzle.get_cell(missing_value_position) == 1
+    assert ps._missing_values[missing_value_position] == []
