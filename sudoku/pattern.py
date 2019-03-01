@@ -3,6 +3,23 @@ from collections import Iterable
 from sudoku import Puzzle
 
 
+class PatternResponse:
+    def __init__(self):
+
+        self._results = {}
+
+    def add_response(self, position: tuple, value: int, candidate_reduction=False):
+        self._results[position] = (value, candidate_reduction)
+
+    def get_responses(self):
+        responses = []
+
+        for k, v in self._results.items():
+            responses.append((k, v[0], v[1]))
+
+        return responses
+
+
 class Pattern:
 
     # Constants for patterns
@@ -110,9 +127,10 @@ class Pattern:
 
                 contained_positions = [
                     (x, y)
-                    for x in range(chunk_init_x, chunk_final_x + 1)
-                    for y in range(chunk_init_y, chunk_final_y + 1)
+                    for x in range(chunk_init_x, chunk_final_x)
+                    for y in range(chunk_init_y, chunk_final_y)
                 ]
+
                 chunk_flattened = [
                     candidates[position] for position in contained_positions
                 ]
@@ -129,11 +147,11 @@ class Pattern:
                 # resolve on each match.
                 for matching_with in range(1, 10):
                     if self._does_match(chunk, matching_with):
-                        for cell_y in range(0, chunk_final_y):
-                            for cell_x in range(0, chunk_final_x):
+                        for cell_y in range(0, self.height):
+                            for cell_x in range(0, self.width):
                                 if self.resolution[cell_y][cell_x]:
                                     response.add_response(
-                                        (cell_x, cell_y),
+                                        (cell_x + chunk_init_x, cell_y + chunk_init_y),
                                         matching_with,
                                         self.candidate_reduction,
                                     )
@@ -160,35 +178,18 @@ class Pattern:
                 cell_filled = len(cell) == 1 and cell is not [0]
                 cell_not_matching = matching_equals not in cell
                 cell_matching = matching_equals in cell
-                cell_not_filled = len(cell) != 0 or cell is [0]
+                cell_not_filled = len(cell) != 1 or cell is [0]
 
-                if self._pattern[y][x] is self.UNFILLED:
-                    if cell_filled:
-                        return False
-                elif self._pattern[y][x] is self.MATCHING:
-                    if cell_not_matching:
-                        return False
-                elif self._pattern[y][x] is self.NON_MATCHING:
-                    if cell_matching:
-                        return False
-                elif self._pattern[y][x] is self.FILLED:
-                    if cell_not_filled:
-                        return False
+                if self._pattern[y][x] is self.UNFILLED and cell_filled:
+                    return False
+                elif self._pattern[y][x] is self.MATCHING and cell_not_matching:
+                    return False
+                elif self._pattern[y][x] is self.NON_MATCHING and cell_matching:
+                    return False
+                elif self._pattern[y][x] is self.FILLED and cell_not_filled:
+                    return False
 
         # If we have not returned False yet, then
         # the pattern should be an exact match, so
         # return True.
         return True
-
-
-class PatternResponse:
-    def __init__(self):
-
-        self._results = {}
-
-    def add_response(self, position: tuple, value: int, candidate_reduction=False):
-        self._results[position] = (value, candidate_reduction)
-
-    def get_responses(self):
-        for k, v in self._results.items():
-            yield (k, v[0], v[1])
