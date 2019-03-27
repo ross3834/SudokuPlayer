@@ -8,7 +8,7 @@ class PatternResponse:
 
         self._results = {}
 
-    def add_response(self, position: tuple, value: int, candidate_reduction=False):
+    def add_response(self, position: tuple, value: int, candidate_reduction):
         self._results[position] = (value, candidate_reduction)
 
     def get_responses(self):
@@ -32,7 +32,7 @@ class Pattern:
     def __init__(self, pattern, resolution, candidate_reduction=False):
         """
         Args:
-            pattern(list): A list of lists representing the
+            pattern(list): A list of list of ints representing the
                            smallest possible grid the pattern
                            can fit in, with the pattern in it.
                            eg)
